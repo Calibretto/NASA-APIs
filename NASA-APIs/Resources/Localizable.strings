@@ -1,0 +1,22 @@
+/* 
+  Localizable.strings
+  NASA-APIs
+
+  Created by Brian Hackett on 21/10/2022.
+  
+*/
+
+/**
+ *  Context: Title of the top API screen
+ */
+"apis.title" = "NASA APIs";
+
+/**
+ *  Context: Astronomy Picture of the Day
+ */
+"apis.apod" = "Astronomy Picture of the Day";
+
+/**
+ *  Context: Astronomy Picture of the Day (Title)
+ */
+"apis.apod.title" = "Astronomy Picture of the Day";
