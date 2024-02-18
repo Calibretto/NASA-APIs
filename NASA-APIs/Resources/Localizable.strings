@@ -20,3 +20,14 @@
  *  Context: Astronomy Picture of the Day (Title)
  */
 "apis.apod.title" = "Astronomy Picture of the Day";
+
+/**
+ *  Context: Mars Rover Photos
+ */
+"apis.mars_rover_photos" = "Mars Rover Photos";
+
+/**
+ *  Context: Mars Rover Photos (Title)
+ */
+"apis.mars_rover_photos.title" = "Mars Rover Photos";
+

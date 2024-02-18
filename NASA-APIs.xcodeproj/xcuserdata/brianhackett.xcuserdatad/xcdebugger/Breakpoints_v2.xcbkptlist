@@ -3,4 +3,54 @@
    uuid = "82C2977A-251D-409A-9395-2E82CC6F80B3"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EFD79C4A-19AE-4F92-8D8C-B2D4C4BA9966"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NASA-APIs/Networking/NetworkController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "execute(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EFD79C4A-19AE-4F92-8D8C-B2D4C4BA9966 - b3009437d898dbd7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for NASA_APIs.NetworkController.execute(NASA_APIs.NASAAPIRequest&lt;&#x3c4;_0_0&gt;) async throws -&gt; &#x3c4;_0_0"
+                  moduleName = "NASA-APIs"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianhackett/Development/iOS/NASA-APIs/NASA-APIs/Networking/NetworkController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "1660">
+               </Location>
+               <Location
+                  uuid = "EFD79C4A-19AE-4F92-8D8C-B2D4C4BA9966 - 2cc90e4fbbfbf1dc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) suspend resume partial function for NASA_APIs.NetworkController.execute(NASA_APIs.NASAAPIRequest&lt;&#x3c4;_0_0&gt;) async throws -&gt; &#x3c4;_0_0"
+                  moduleName = "NASA-APIs"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brianhackett/Development/iOS/NASA-APIs/NASA-APIs/Networking/NetworkController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "164">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

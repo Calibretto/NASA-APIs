@@ -39,4 +39,9 @@ extension NASAAPIRequest {
         let qp = APODQueryParameters(date: date, startDate: startDate, endDate: endDate, count: count, thumbs: thumbs, apiKey: APIKEY)
         return NASAAPIRequest<APODResponse>(url: "https://api.nasa.gov/planetary/apod", method: "GET", queryParameters: qp)
     }
+    
+    static func marsRoverPhotosRequest(sol: Int = 1000) -> NASAAPIRequest<MarsRoverPhotosResponse> {
+        let qp = MarsRoverPhotosQueryParameters(sol: sol, apiKey: APIKEY)
+        return NASAAPIRequest<MarsRoverPhotosResponse>(url: "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos", method: "GET", queryParameters: qp)
+    }
 }

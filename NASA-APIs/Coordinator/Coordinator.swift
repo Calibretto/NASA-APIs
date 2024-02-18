@@ -14,6 +14,7 @@ class Coordinator: NSObject {
         case initialisation
         case main
         case apod
+        case marsRoverPictures
     }
     
     let navigationController: UINavigationController
@@ -49,6 +50,17 @@ class Coordinator: NSObject {
                 
                 let apodVC = APODViewController(coordinator: self)
                 navigationController.pushViewController(apodVC, animated: true)
+                return
+            }
+            break
+        case .marsRoverPictures:
+            guard navigationController.presentedViewController is MarsRoverPhotosViewController else {
+                if (navigationController.presentedViewController is APIViewController) == false {
+                    navigationController.popToRootViewController(animated: true)
+                }
+                
+                let mrpVC = MarsRoverPhotosViewController(coordinator: self)
+                navigationController.pushViewController(mrpVC, animated: true)
                 return
             }
             break

@@ -7,6 +7,7 @@
 
 import UIKit
 
+// TODO: Make adding a new button easier
 class APIViewController: UIViewController, CoordinatedViewController {
     
     weak var coordinator: Coordinator?
@@ -30,17 +31,23 @@ class APIViewController: UIViewController, CoordinatedViewController {
         view = View()
         if let view = view as? View {
             view.addAPODButtonSelector(#selector(apodButtonPressed), target: self)
+            view.addMRPButtonSelector(#selector(mrpButtonPressed), target: self)
         }
     }
     
     @objc func apodButtonPressed() {
         self.coordinator?.moveTo(state: .apod)
     }
+    
+    @objc func mrpButtonPressed() {
+        self.coordinator?.moveTo(state: .marsRoverPictures)
+    }
 
     private class View: UIView {
         let scrollView = UIScrollView()
         let stackView = UIStackView()
         let apodButton = UIButton()
+        let mrpButton = UIButton()
         
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -65,8 +72,19 @@ class APIViewController: UIViewController, CoordinatedViewController {
             apodButton.setAttributedTitle(apodButtonTitle, for: .normal)
             apodButton.contentHorizontalAlignment = .center
             
+            // Mars Rover Photos button
+            let mrpText = NSLocalizedString("apis.mars_rover_photos", comment: "Mars Rover Photos")
+            let mrpAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.Buttons.normal,
+                .foregroundColor: UIColor.red
+            ]
+            let mrpButtonTitle = NSAttributedString(string: mrpText, attributes: mrpAttributes)
+            mrpButton.setAttributedTitle(mrpButtonTitle, for: .normal)
+            mrpButton.contentHorizontalAlignment = .center
+            
             stackView.axis = .vertical
             stackView.alignment = .fill
+            stackView.distribution = .fillEqually
             stackView.spacing = 8
             
             createViewHierarchy()
@@ -75,6 +93,7 @@ class APIViewController: UIViewController, CoordinatedViewController {
         
         private func createViewHierarchy() {
             stackView.addArrangedSubview(apodButton)
+            stackView.addArrangedSubview(mrpButton)
             
             addSubview(scrollView)
             scrollView.addSubview(stackView)
@@ -104,6 +123,10 @@ class APIViewController: UIViewController, CoordinatedViewController {
         
         func addAPODButtonSelector(_ selector: Selector, target: Any) {
             apodButton.addTarget(target, action: selector, for: .touchUpInside)
+        }
+        
+        func addMRPButtonSelector(_ selector: Selector, target: Any) {
+            mrpButton.addTarget(target, action: selector, for: .touchUpInside)
         }
     }
 }

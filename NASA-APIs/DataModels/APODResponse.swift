@@ -8,7 +8,7 @@
 import Foundation
 
 struct APODResponse: Decodable {
-    let copyright: String
+    let copyright: String?
     let date: String
     let explanation: String
     let hdURL: String
