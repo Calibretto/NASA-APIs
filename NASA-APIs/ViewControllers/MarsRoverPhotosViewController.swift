@@ -40,6 +40,7 @@ class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController
         if let view = self.view as? View {
             view.titleLabel.text = title
             view.tableView.dataSource = self
+            view.tableView.delegate = self
         }
     }
     
@@ -121,10 +122,9 @@ class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController
                 photoView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.5),
                 
                 dateLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-                dateLabel.leadingAnchor.constraint(equalTo: photoView.leadingAnchor),
+                dateLabel.leadingAnchor.constraint(equalTo: photoView.trailingAnchor),
                 dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
                 dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-                dateLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.5),
             ])
         }
     }
@@ -198,5 +198,11 @@ extension MarsRoverPhotosViewController: UITableViewDataSource {
         } else {
             return UITableViewCell()
         }
+    }
+}
+
+extension MarsRoverPhotosViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        100
     }
 }
