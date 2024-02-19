@@ -5,18 +5,36 @@
 //  Created by Brian Hackett on 22/10/2022.
 //
 
+import Combine
 import Foundation
 
-struct APODViewModel {
+class APODViewModel {
     
     private let nc = NetworkController<APODResponse>()
     private let request = NASAAPIRequest<APODResponse>.apodRequest(date: nil, startDate: nil, endDate: nil, count: nil, thumbs: nil)
     
-    var apod: APODResponse {
-        get async throws {
-            // TODO: Caching
-            return try await nc.execute(request)
+    private var cancellables = Set<AnyCancellable>()
+    
+    @Published var apod: APODResponse? = nil
+    @Published var error: Error? = nil
+    
+    init() {
+        do {
+            try nc.execute(request)
+                .sink(receiveCompletion: { error in
+                    switch error {
+                    case .finished:
+                        // Nothing
+                        break
+                    case .failure(let error):
+                        self.error = error
+                    }
+                }, receiveValue: { response in
+                    self.apod = response
+                })
+                .store(in: &cancellables)
+        } catch {
+            self.error = error
         }
     }
-    
 }

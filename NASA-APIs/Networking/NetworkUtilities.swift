@@ -5,6 +5,7 @@
 //  Created by Brian Hackett on 21/10/2022.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -17,24 +18,16 @@ enum NetworkError: Error {
 
 struct NetworkUtilities {
     
-    private static func requestData(url urlString: String) async throws -> Data {
+    static func loadImage(url urlString: String) throws -> AnyPublisher<UIImage?, Never> {
         guard let url = URL(string: urlString) else {
             throw NetworkError.unableToCreateURL
         }
         
-        do {
-            return try Data(contentsOf: url)
-        } catch {
-            throw NetworkError.networkingError(error: error)
-        }
+        return URLSession.shared.dataTaskPublisher(for: url)
+                                .map(\.data)
+                                .compactMap { UIImage(data: $0) }
+                                .replaceError(with: nil)
+                                .eraseToAnyPublisher()
     }
-    
-    static func loadImage(url: String) async throws -> UIImage {
-        let data = try await requestData(url: url)
-        if let image = UIImage(data: data) {
-            return image
-        } else {
-            throw NetworkError.invalidData
-        }
-    }
+
 }

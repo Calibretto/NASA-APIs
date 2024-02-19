@@ -14,7 +14,7 @@ struct NASAAPIRequest<Value: Decodable> {
     let method: String
     let queryParameters: QueryParameters?
     
-    func urlRequest() -> URLRequest? {
+    func makeURL() -> URL? {
         guard var urlComponents = URLComponents(string: url) else {
             return nil
         }
@@ -23,7 +23,11 @@ struct NASAAPIRequest<Value: Decodable> {
             urlComponents.queryItems = queryParameters.createQueryItems()
         }
         
-        guard let url = urlComponents.url else {
+        return urlComponents.url
+    }
+    
+    func urlRequest() -> URLRequest? {
+        guard let url = makeURL() else {
             return nil
         }
         

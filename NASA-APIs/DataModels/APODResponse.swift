@@ -11,7 +11,7 @@ struct APODResponse: Decodable {
     let copyright: String?
     let date: String
     let explanation: String
-    let hdURL: String
+    let hdURL: String?
     let mediaType: String
     let serviceVersion: String
     let title: String

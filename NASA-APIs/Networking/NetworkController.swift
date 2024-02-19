@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 enum NetworkControllerError: Error {
     case unableToCreateURLRequest
@@ -23,30 +24,14 @@ class NetworkController<Value: Decodable> {
         self.urlSession = urlSession
     }
     
-    func execute(_ request: NASAAPIRequest<Value>) async throws -> Value {
-        guard let urlRequest = request.urlRequest() else {
-            throw NetworkControllerError.unableToCreateURLRequest
+    func execute(_ request: NASAAPIRequest<Value>) throws -> AnyPublisher<Value, Error> {
+        guard let url = request.makeURL() else {
+            throw NetworkControllerError.unableToCreateURL
         }
-        
-        do {
-            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
-            guard let httpURLResponse = urlResponse as? HTTPURLResponse else {
-                throw NetworkControllerError.badResponse
-            }
             
-            guard (200..<300).contains(httpURLResponse.statusCode) else {
-                throw NetworkControllerError.badResponse
-            }
-            
-            let object: Value
-            do {
-                object = try JSONDecoder().decode(Value.self, from: data)
-            } catch {
-                throw NetworkControllerError.parsingError(error: error)
-            }
-            return object
-        } catch {
-            throw NetworkControllerError.networkingError(error: error)
-        }
+        return URLSession.shared.dataTaskPublisher(for: url)
+                .map(\.data)
+                .decode(type: Value.self, decoder: JSONDecoder())
+                .eraseToAnyPublisher()
     }
 }

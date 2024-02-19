@@ -5,12 +5,14 @@
 //  Created by Brian Hackett on 21/10/2022.
 //
 
+import Combine
 import Foundation
 import UIKit
 
 class APODViewController: UIViewController, CoordinatedViewController {
     weak var coordinator: Coordinator?
     private var viewModel = APODViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     required init(coordinator: Coordinator) {
         self.coordinator = coordinator
@@ -33,42 +35,51 @@ class APODViewController: UIViewController, CoordinatedViewController {
     }
     
     private func loadData() {
-        Task {
-            do {
-                // TODO: Consider if there's a better way to handle this
-                let apod = try await viewModel.apod
-                setAPODResponse(apod)
-            } catch {
-                displayGenericError()
+        viewModel.$apod.sink { response in
+            if let response {
+                self.setAPODResponse(response)
             }
         }
+        .store(in: &cancellables)
+        
+        viewModel.$error.sink { error in
+            if error != nil {
+                self.displayGenericError()
+            }
+        }
+        .store(in: &cancellables)
     }
     
-    @MainActor
     private func setAPODResponse(_ apod: APODResponse) {
-        if let view = self.view as? View {
-            view.titleLabel.text = apod.title
-            view.descriptionLabel.text = apod.explanation
-            
-            // TODO: Display loading view first
-            Task {
-                do {
-                    view.imageView.image = try await NetworkUtilities.loadImage(url: apod.hdURL)
-                } catch {
-                    displayGenericError()
+        DispatchQueue.main.async {
+            if let view = self.view as? View {
+                view.titleLabel.text = apod.title
+                view.descriptionLabel.text = apod.explanation
+                
+                // TODO: Display loading view first
+                if let hdURL = apod.hdURL {
+                    do {
+                        try NetworkUtilities.loadImage(url: hdURL)
+                            .receive(on: DispatchQueue.main)
+                            .sink { view.imageView.image = $0 }
+                            .store(in: &self.cancellables)
+                    } catch {
+                        // TODO: Handle error
+                    }
                 }
             }
         }
     }
     
-    @MainActor
     private func displayGenericError() {
-        let alert = UIAlertController(title: "Error", message: "Oops - something went wrong while loading the APOD data.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
-            self.coordinator?.moveTo(state: .main)
-        }))
-        
-        present(alert, animated: true)
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Error", message: "Oops - something went wrong while loading the APOD data.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
+                self.coordinator?.moveTo(state: .main)
+            }))
+            
+            self.present(alert, animated: true)
+        }
     }
     
     private class View: UIView {

@@ -5,16 +5,20 @@
 //  Created by Brian Hackett on 18/02/2024.
 //
 
+import Combine
 import Foundation
 import UIKit
 
 class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController {
     weak var coordinator: Coordinator?
     private var viewModel = MarsRoverPhotosViewModel()
+    private var cancellables = Set<AnyCancellable>()
     private var photos = [MarsRoverPhoto]() {
         didSet {
-            if let view = self.view as? View {
-                view.tableView.reloadData()
+            DispatchQueue.main.async {
+                if let view = self.view as? View {
+                    view.tableView.reloadData()
+                }
             }
         }
     }
@@ -45,14 +49,19 @@ class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController
     }
     
     private func loadData() {
-        Task {
-            do {
-                // TODO: Consider if there's a better way to handle this
-                photos = try await viewModel.marsRoverPhotos
-            } catch {
-                displayGenericError()
+        viewModel.$photos.sink { photos in
+            if let photos {
+                self.photos = photos
             }
         }
+        .store(in: &cancellables)
+        
+        viewModel.$error.sink { error in
+            if error != nil {
+                self.displayGenericError()
+            }
+        }
+        .store(in: &cancellables)
     }
     
     @MainActor
@@ -69,6 +78,8 @@ class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController
         let photoView = UIImageView()
         let dateLabel = UILabel()
         
+        private var cancellables = Set<AnyCancellable>()
+        
         required init?(coder: NSCoder) {
             super.init(coder: coder)
             setup()
@@ -83,12 +94,13 @@ class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController
             dateLabel.text = photo.earthDate
             
             // TODO: Display loading view first
-            Task {
-                do {
-                    photoView.image = try await NetworkUtilities.loadImage(url: photo.imgSrc)
-                } catch {
-                    // TODO: Error handling
-                }
+            do {
+                try NetworkUtilities.loadImage(url: photo.imgSrc)
+                    .receive(on: DispatchQueue.main)
+                    .sink { self.photoView.image = $0 }
+                    .store(in: &cancellables)
+            } catch {
+                // TODO: Handle error
             }
         }
         
@@ -126,6 +138,11 @@ class MarsRoverPhotosViewController: UIViewController, CoordinatedViewController
                 dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
                 dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             ])
+        }
+        
+        override func prepareForReuse() {
+            dateLabel.text = nil
+            photoView.image = nil
         }
     }
     
